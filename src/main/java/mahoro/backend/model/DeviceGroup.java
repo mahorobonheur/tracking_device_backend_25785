@@ -2,10 +2,19 @@ package mahoro.backend.model;
 
 
 
-import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "device_groups")
@@ -28,16 +37,6 @@ public class DeviceGroup {
         inverseJoinColumns = @JoinColumn(name = "device_id")
     )
     private Set<Device> devices = new HashSet<>();
-
-   
-    @ManyToMany
-    @JoinTable(
-        name = "group_members",
-        joinColumns = @JoinColumn(name = "group_id"),
-        inverseJoinColumns = @JoinColumn(name = "person_id")
-    )
-  
-    private Set<User> members = new HashSet<>();
 
 
     public UUID getDeviceGroupId() {
@@ -78,16 +77,5 @@ public class DeviceGroup {
     public void setDevices(Set<Device> devices) {
         this.devices = devices;
     }
-
-
-    public Set<User> getMembers() {
-        return members;
-    }
-
-
-    public void setMembers(Set<User> members) {
-        this.members = members;
-    }
-
     
 }

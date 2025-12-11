@@ -1,13 +1,24 @@
 package mahoro.backend.model;
 
-import jakarta.persistence.*;
-import lombok.ToString;
-
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.ToString;
 
 @Entity
 @Table(name = "users")
@@ -23,32 +34,28 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private String password; 
-
-    @Column(nullable = false)
+    @Column(nullable = true)
     private boolean active = false; 
 
+    @Column(nullable = true)
+    private boolean locationAssigned = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id", nullable = false)
+    @JoinColumn(name = "location_id", nullable=true)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Location assignedLocation;
 
-    @OneToOne(mappedBy = "primaryUser", fetch = FetchType.LAZY)
+    // This should be @OneToMany because a user can have multiple devices
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnore
     @ToString.Exclude
-    private Device primaryDevice; 
+    private Set<Device> devices; // Changed from primaryDevice to devices
 
-    @ElementCollection(targetClass = RoleType.class)
-    @CollectionTable(name = "person_roles", joinColumns = @JoinColumn(name = "person_id"))
+    @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    @Column(name = "role_type")
-    private Set<RoleType> roles = new HashSet<>();
+    private RoleType role;
 
-    @ManyToMany(mappedBy = "members")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "locationHistory", "groups"})
-    private Set<DeviceGroup> groups = new HashSet<>();
-
-
+    // Getters and setters
     public UUID getUserId() {
         return userId;
     }
@@ -73,20 +80,20 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public boolean isActive() {
         return active;
     }
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public boolean isLocationAssigned() {
+        return locationAssigned;
+    }
+
+    public void setLocationAssigned(boolean locationAssigned) {
+        this.locationAssigned = locationAssigned;
     }
 
     public Location getAssignedLocation() {
@@ -97,27 +104,19 @@ public class User {
         this.assignedLocation = assignedLocation;
     }
 
-    public Device getPrimaryDevice() {
-        return primaryDevice;
+    public Set<Device> getDevices() {
+        return devices;
     }
 
-    public void setPrimaryDevice(Device primaryDevice) {
-        this.primaryDevice = primaryDevice;
+    public void setDevices(Set<Device> devices) {
+        this.devices = devices;
     }
 
-    public Set<RoleType> getRoles() {
-        return roles;
+    public RoleType getRole() {
+        return role;
     }
 
-    public void setRoles(Set<RoleType> roles) {
-        this.roles = roles;
-    }
-
-    public Set<DeviceGroup> getGroups() {
-        return groups;
-    }
-
-    public void setGroups(Set<DeviceGroup> groups) {
-        this.groups = groups;
+    public void setRole(RoleType role) {
+        this.role = role;
     }
 }

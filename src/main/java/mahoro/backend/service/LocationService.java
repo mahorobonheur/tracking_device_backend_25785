@@ -57,4 +57,27 @@ public class LocationService {
         return locationRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Location not found with ID: " + id));
     }
+
+     public Location updateLocation(UUID id, Location locationDetails) {
+        Location location = findById(id);
+        
+        // Update fields
+        location.setName(locationDetails.getName());
+        location.setType(locationDetails.getType());
+        location.setCenterLatitude(locationDetails.getCenterLatitude());
+        location.setCenterLongitude(locationDetails.getCenterLongitude());
+        
+        // Update parent if provided
+        if (locationDetails.getParent() != null && locationDetails.getParent().getLocationId() != null) {
+            Location parent = findById(locationDetails.getParent().getLocationId());
+            location.setParent(parent);
+        }
+        
+        return locationRepository.save(location);
+    }
+    
+    public void deleteLocation(UUID id) {
+        Location location = findById(id);
+        locationRepository.delete(location);
+    }
 }
