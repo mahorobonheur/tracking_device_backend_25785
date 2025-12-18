@@ -52,11 +52,10 @@ public class Device {
     @Column
     private String deviceName;
 
-    // Changed to @ManyToOne since a user can have multiple devices
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id") // Changed column name to match convention
+    @JoinColumn(name = "user_id") 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "assignedLocation", "devices"})
-    private User user; // Changed from primaryUser to user for consistency
+    private User user;
 
     @OneToMany(mappedBy = "device")
     @JsonManagedReference

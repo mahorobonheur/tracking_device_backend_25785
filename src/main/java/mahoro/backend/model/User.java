@@ -45,17 +45,17 @@ public class User {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Location assignedLocation;
 
-    // This should be @OneToMany because a user can have multiple devices
+    
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
     @ToString.Exclude
-    private Set<Device> devices; // Changed from primaryDevice to devices
+    private Set<Device> devices; 
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private RoleType role;
 
-    // Getters and setters
+    
     public UUID getUserId() {
         return userId;
     }
